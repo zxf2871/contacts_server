@@ -1,0 +1,9 @@
+*.iml
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/.idea/vcs.xml
+.idea/misc.xml
+.idea/
+/target/
