@@ -6,7 +6,7 @@
 	<groupId>com.sectong</groupId>
 	<artifactId>yidongyi</artifactId>
 	<version>0.2.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>yidongyi</name>
 	<description>移动易后台</description>
@@ -45,6 +45,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<!--放开注释打包war发布到tomcat上-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -100,6 +106,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>b8a3</warName>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
