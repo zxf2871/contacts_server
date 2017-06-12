@@ -11,6 +11,7 @@ import org.springframework.boot.context.embedded.Ssl;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -51,7 +52,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 						SecurityConstraint securityConstraint = new SecurityConstraint();
 						securityConstraint.setUserConstraint("CONFIDENTIAL");
 						SecurityCollection collection = new SecurityCollection();
-						collection.addPattern("/*");
+						collection.addPattern("/b8a3/*");
 						securityConstraint.addCollection(collection);
 						context.addConstraint(securityConstraint);
 					}
@@ -67,5 +68,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 		connector.setPort(8080);
 		connector.setRedirectPort(8443);
 		return connector;
+	}
+
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/b8a3/**")
+				.addResourceLocations("classpath:/b8a3/");
 	}
 }
