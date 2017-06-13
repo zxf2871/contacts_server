@@ -96,6 +96,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
+	 * 重置用户密码
+	 */
+	@Override
+	public User resetToken(String userName, String token) {
+		User user = userRepository.findByUsername(userName);
+		user.setToken(token);
+		return userRepository.save(user);
+	}
+
+	/**
 	 * 用户上传头像
 	 */
 
@@ -211,6 +221,7 @@ public class UserServiceImpl implements UserService {
 			data.put("id", user.getId());
 			data.put("username", user.getUsername());
 			data.put("image", user.getImage());
+			data.put("name", user.getName());
 			if (user.getEnabled() == 1) {
 				data.put("enabled", "<font color='green'>启用</font>");
 			} else {

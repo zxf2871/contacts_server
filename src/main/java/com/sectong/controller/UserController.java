@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * 处理用户类接口
- * 
+ *
  * @author jiekechoo
  *
  */
@@ -76,7 +76,7 @@ public class UserController {
 
 	/**
 	 * 创建用户验证表单
-	 * 
+	 *
 	 * @param binder
 	 */
 	@InitBinder("userCreateForm")
@@ -86,18 +86,23 @@ public class UserController {
 
 	/**
 	 * APP登录用接口
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "userLogin", method = RequestMethod.POST)
 	@ApiOperation(value = "用户登录接口", notes = "用户登录，接口POST请求，采用HttpBasic认证方式")
-	public ResponseEntity<Message> userLogin(HttpServletRequest request) {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		User user = userService.getUserByUsername(username);
-		if (user == null) {
-			message.setMsg(ResponseCode.ERROR_LOGIN_PASSWORD, "用户登录失败");
+    public ResponseEntity<Message> userLogin(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        User user = userService.getUserByUsername(username);
+        String token = "this is token please save it!" + System.currentTimeMillis();
+        user.setToken(token);
+
+        userService.resetToken(username, token);
+
+        if (user == null) {
+            message.setMsg(ResponseCode.ERROR_LOGIN_PASSWORD, "用户登录失败");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		} else {
 			message.setMsg(ResponseCode.SUCCESS, "用户登录成功", user);
@@ -108,7 +113,7 @@ public class UserController {
 
 	/**
 	 * 创建用户接口
-	 * 
+	 *
 	 * @param form
 	 * @param bindingResult
 	 * @return
@@ -176,7 +181,7 @@ public class UserController {
 
 	/**
 	 * 使用 ResponseBody作为结果 200
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -197,7 +202,7 @@ public class UserController {
 
 	/**
 	 * 上传用户头像
-	 * 
+	 *
 	 * @param file
 	 * @param request
 	 * @return
@@ -212,7 +217,7 @@ public class UserController {
 
 	/**
 	 * 获取用户列表
-	 * 
+	 *
 	 * @param current
 	 * @param rowCount
 	 * @param searchPhrase
@@ -227,7 +232,7 @@ public class UserController {
 
 	/**
 	 * 自动登录，获得session和x-auth-token
-	 * 
+	 *
 	 * @param username
 	 * @param password
 	 * @param request

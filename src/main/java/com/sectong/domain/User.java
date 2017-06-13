@@ -24,6 +24,8 @@ public class User {
 	private String username;
 	private String password;
 	private String image;
+	private String name;
+	private String token;
 	private int enabled;
 
 	public Long getId() {
@@ -56,6 +58,18 @@ public class User {
 
 	public void setEnabled(int enabled) {
 		this.enabled = enabled;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	@Override
