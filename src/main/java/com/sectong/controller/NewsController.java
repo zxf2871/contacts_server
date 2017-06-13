@@ -2,6 +2,7 @@ package com.sectong.controller;
 
 import javax.validation.Valid;
 
+import com.sectong.message.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +50,11 @@ public class NewsController {
 	public ResponseEntity<Message> createNews(@Valid @RequestBody NewsCreateForm form, BindingResult bindingResult) {
 		try {
 			News news = newsService.create(form);
-			message.setMsg(1, "新闻创建成功", news);
+			message.setMsg(ResponseCode.SUCCESS, "新闻创建成功", news);
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		} catch (DataIntegrityViolationException e) {
 			LOGGER.warn("create news error", e);
-			message.setMsg(0, "创建新闻失败");
+			message.setMsg(ResponseCode.ERROR_CREATE_NEWS, "创建新闻失败");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 	}
@@ -62,7 +63,7 @@ public class NewsController {
 	@ApiOperation(value = "获取新闻列表接口", notes = "获取新闻列表，接口startid默认0，下拉时根据最大值获取后续列表，可分页查询")
 	public ResponseEntity<Message> getNewsList(@RequestParam(defaultValue = "0") Long startid, Pageable p) {
 		Page<News> news = newsService.getNewsList(startid, p);
-		message.setMsg(1, "获取新闻列表成功", news);
+		message.setMsg(ResponseCode.SUCCESS, "获取新闻列表成功", news);
 		return new ResponseEntity<Message>(message, HttpStatus.OK);
 	}
 

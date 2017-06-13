@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.sectong.message.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,10 +97,10 @@ public class UserController {
 		String password = request.getParameter("password");
 		User user = userService.getUserByUsername(username);
 		if (user == null) {
-			message.setMsg(0, "用户登录失败");
+			message.setMsg(ResponseCode.ERROR_LOGIN_PASSWORD, "用户登录失败");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		} else {
-			message.setMsg(1, "用户登录成功", user);
+			message.setMsg(ResponseCode.SUCCESS, "用户登录成功", user);
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 
@@ -120,14 +121,14 @@ public class UserController {
 
 		if (sendSMSService.findByUsernameAndVcode(form.getUsername(), form.getVcode()) == null) {
 			LOGGER.info("验证码错误，或找不到");
-			message.setMsg(0, "验证码错误或过期");
+			message.setMsg(ResponseCode.ERROR_CAPTCHA, "验证码错误或过期");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 
 		LOGGER.debug("Processing user create form={}, bindingResult={}", form, bindingResult);
 		if (bindingResult.hasErrors()) {
 			// failed validation
-			message.setMsg(0, "用户创建失败");
+			message.setMsg(ResponseCode.ERROR_CREATE_USER, "用户创建失败");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 		try {
@@ -135,12 +136,12 @@ public class UserController {
 		} catch (DataIntegrityViolationException e) {
 			LOGGER.warn("Exception occurred when trying to save the user, assuming duplicate username", e);
 			bindingResult.reject("username.exists", "username already exists");
-			message.setMsg(0, "创建用户失败：用户名已存在");
+			message.setMsg(ResponseCode.ERROR_CREATE_USER_EXITS, "创建用户失败：用户名已存在");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 
 		}
 		// ok, redirect
-		message.setMsg(1, "用户创建成功");
+		message.setMsg(ResponseCode.SUCCESS, "用户创建成功");
 		return new ResponseEntity<Message>(message, HttpStatus.OK);
 	}
 
@@ -151,23 +152,23 @@ public class UserController {
 			BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
 		if (userService.getUserByUsername(form.getMobile()) == null) {
 			LOGGER.info("用户不存在");
-			message.setMsg(0, "用户不存在");
+			message.setMsg(ResponseCode.ERROR_USER_NULL, "用户不存在");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 		if (sendSMSService.findByUsernameAndVcode(form.getMobile(), form.getVcode()) == null) {
 			LOGGER.info("验证码错误，或找不到");
-			message.setMsg(0, "验证码错误或过期");
+			message.setMsg(ResponseCode.ERROR_CAPTCHA, "验证码错误或过期");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 
 		try {
 			User user = userService.resetPassword(form);
 			authenticateUserAndSetSession(form.getMobile(), form.getPassword(), request);
-			message.setMsg(1, "用户修改、重置密码成功", user);
+			message.setMsg(ResponseCode.SUCCESS, "用户修改、重置密码成功", user);
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		} catch (DataIntegrityViolationException e) {
 			LOGGER.warn("数据提交错误，请遵守验证规则", e);
-			message.setMsg(2, "数据提交错误，请遵守验证规则");
+			message.setMsg(ResponseCode.ERROR_SUBMIT_DATA, "数据提交错误，请遵守验证规则");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 
@@ -187,9 +188,9 @@ public class UserController {
 		HttpStatus status = user != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 
 		if (user == null) {
-			message.setMsg(0, "未找到用户");
+			message.setMsg(ResponseCode.ERROR_USER_NULL, "未找到用户");
 		} else {
-			message.setMsg(1, "用户信息", user);
+			message.setMsg(ResponseCode.SUCCESS, "用户信息", user);
 		}
 		return new ResponseEntity<Message>(message, status);
 	}
@@ -204,7 +205,7 @@ public class UserController {
 	@RequestMapping(value = "i/uploadImage", method = RequestMethod.POST)
 	@ApiOperation(value = "上传用户头像接口", notes = "上传用户头像，接口采用MultipartFile上传图片文件")
 	public ResponseEntity<?> uploadImage(@RequestParam MultipartFile file, HttpServletRequest request) {
-		message.setMsg(1, "用户上传头像成功", userService.uploadImage(file, request));
+		message.setMsg(ResponseCode.SUCCESS, "用户上传头像成功", userService.uploadImage(file, request));
 		return new ResponseEntity<Message>(message, HttpStatus.OK);
 
 	}

@@ -1,5 +1,6 @@
 package com.sectong.controller;
 
+import com.sectong.message.ResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,22 +45,22 @@ public class ThirdPartyController {
 
 		if (mobile.isEmpty()) {
 			LOGGER.info("手机号码输入为空");
-			message.setMsg(0, "手机号码不能为空");
+			message.setMsg(ResponseCode.ERROR_PHONE_NUM_NULL, "手机号码不能为空");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 		if (!ValidatorUtil.isMobile(mobile)) {
 			LOGGER.info("手机号码错误：{}", mobile);
-			message.setMsg(0, "手机号码错误");
+			message.setMsg(ResponseCode.ERROR_PHONE_NUM, "手机号码错误");
 			return new ResponseEntity<Message>(message, HttpStatus.OK);
 		}
 
 		String ret = sendSMSService.send(mobile);
 		if (ret.equals("0")) {
 			LOGGER.info("验证码发送成功：{}", mobile);
-			message.setMsg(1, "验证码发送成功");
+			message.setMsg(ResponseCode.SUCCESS, "验证码发送成功");
 		} else {
 			LOGGER.info("验证码发送失败：{}", mobile);
-			message.setMsg(0, "验证码发送失败：" + ret);
+			message.setMsg(ResponseCode.ERROR_SEND_CAPTCHA, "验证码发送失败：" + ret);
 		}
 
 		LOGGER.info("Access ThirdPartyController.requestSMS");
